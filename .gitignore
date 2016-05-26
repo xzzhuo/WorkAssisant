@@ -1,5 +1,7 @@
 *.class
 *.log
+.DS_Store
+._.DS_Store
 
 # Mobile Tools for Java (J2ME)
 .mtj.tmp/

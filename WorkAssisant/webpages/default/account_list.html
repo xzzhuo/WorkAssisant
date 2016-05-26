@@ -1,0 +1,121 @@
+
+<#include "template_header.html">
+
+<script type="text/javascript">
+$(document).ready(function(){
+	
+	delete_item = function(account)
+	{
+		$.post("account_list.html",
+		{
+			act:"act_account_delete",
+			account:account,
+			random:Math.random()
+		},
+		function(data, status)
+		{
+			if (status == "success")
+	    	{
+	    		var div_table = null;
+	    		try
+	    		{
+	    			div_table = $(data).find("div.ajax-table");
+	    		}
+	    		catch(e)
+	    		{
+	    		
+	    		}
+	    		if (div_table != null)
+	    		{
+	    			$("div.ajax-table").html(div_table.html());
+	    			refresh_table($("#dataTables-account"));
+	    		}
+	    		else
+	    		{
+	    			var retval = JSON.parse(data);
+	    			alert(retval.message);
+	    		}
+	    	}
+		})
+	}
+	
+}); 
+</script>
+
+	<#include "template_menu.html">
+
+	<div id="page-wrapper">
+        <div class="row">
+            <div class="col-lg-12">
+                <h4 class="page-header">${LANG["lang_account_manage"]}</h4>
+            </div>
+            <!-- /.col-lg-12 -->
+        </div>
+        <!-- /.row -->
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        ${LANG["lang_account_list"]}
+                    </div>
+                    <!-- /.panel-heading -->
+                    <div class="panel-body">
+                        <div class="dataTable_wrapper">
+                        	<div class="ajax-table" id="table-list">
+								<table class="table table-striped table-bordered table-hover" id="dataTables-account">
+	                                <thead>
+	                                    <tr>
+	                                        <th>${LANG["lang_id"]}</th>
+	                                        <th>${LANG["lang_account_name"]}</th>
+	                                        <th>${LANG["lang_user_name"]}</th>
+	                                        <th>${LANG["lang_account_type"]}</th>
+	                                        <th>${LANG["lang_account_last_login"]}</th>
+	                                        <th>${LANG["lang_operation"]}</th>
+	                                    </tr>
+	                                </thead>
+	                                <tbody>
+<#if list??>
+<#list list as item>
+	                                    <tr class="odd gradeX">
+	                                        <td>${item.id}</td>
+	                                        <td>${item.account}</td>
+	                                        <td>${item.name}</td>
+	                                        <td>${LANG[item.type]}</td>
+	                                        <td>${item.signdate?string("yyyy-MM-dd HH:mm:ss")}</td>
+	                                        <td>
+	                                        	<a href="javascript:void(0)" onclick="delete_item('${item.account}')"><p class="fa fa-trash-o"> ${LANG["lang_delete"]} </p></a>
+	                                        </td>
+	                                    </tr>
+</#list>
+</#if>
+	                                </tbody>
+	                            </table>
+	                        </div>
+						</div>
+                        <!-- /.table-responsive -->
+                        <div class="well">
+                        	<div class="tablearea-set" style="text-align:right;">
+                            	<a class="btn btn-outline btn-primary" href="account_add.html?act=menu_add_account">${LANG["lang_account_add"]}</a>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- /.panel-body -->
+                </div>
+                <!-- /.panel -->
+            </div>
+            <!-- /.col-lg-12 -->
+        </div>
+        <!-- /.row -->
+
+    </div>
+    <!-- /#page-wrapper -->
+
+<#include "template_footer.html">
+
+<!-- Page-Level account Scripts - Tables - Use for reference -->
+<script type="text/javascript">
+$(document).ready(function() {
+
+    refresh_table($("#dataTables-account"));
+});
+</script>

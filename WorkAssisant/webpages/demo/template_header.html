@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>${title!"No Title"}</title>
+
+
+    <!-- jQuery -->
+    <script src="./js/jquery.min.js"></script>
+
+	<link rel="stylesheet" href="jquery-ui/jquery-ui.css">
+	<script type="text/javascript" src="jquery-ui/jquery-ui.js"></script>
+
+	<script type="text/javascript">
+	$(document).ready(function(){
+	
+		refresh_table = function(obj)
+		{
+		    obj.DataTable({
+				responsive: true
+		    });
+		}
+		
+		init_date_picker = function(picker, defaultDate, currentDate) {
+			picker.datepicker({
+				showButtonPanel: true,
+				showWeek: false,
+				changeMonth: true,
+				changeYear: true,
+				dateFormat: "yy-mm-dd",
+				prevText: "${LANG['lang_prev_day']}",
+				nextText: "${LANG['lang_next_day']}",
+				weekHeader: "${LANG['lang_week_header']}",
+				currentText: "${LANG['lang_today']}",
+				closeText: "${LANG['lang_done']}",
+				monthNamesShort: ${LANG['lang_month_names_short']},
+				dayNamesShort: ${LANG['lang_day_names_short']},
+				dayNamesMin: ${LANG['lang_day_names_min']},
+				defaultDate: defaultDate
+		    });
+		}
+	
+	}); 
+	</script>
+
+</head>
+
+<body>
+
+    <table>
+    	<tr>
+    		<td>
+    

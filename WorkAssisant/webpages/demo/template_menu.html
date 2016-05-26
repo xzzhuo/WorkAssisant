@@ -1,0 +1,96 @@
+</td>
+<td>
+
+    <div class="navbar-header">
+        <a class="navbar-brand" href="main_guid.html?act=menu_main_guid">${LANG["lang_app_name"]}</a>
+    </div>
+    <!-- /.navbar-header -->
+
+    <ul class="nav navbar-top-links navbar-right">
+        <li class="dropdown">${current_account!""}
+            <ul class="dropdown-menu dropdown-user">
+                <li><a href="user_profile.html?act=menu_show_user_profile">${LANG["lang_user_profile"]}</a>
+                </li>
+                <li><a href="user_setting.html?act=menu_show_user_setting">${LANG["lang_user_setting"]}</a>
+                </li>
+                <li>
+                	<a href="account_change_password.html?act=menu_change_password">${LANG["lang_account_change_password"]}</a>
+                </li>
+                <li>
+                	<a href="friend_list.html?act=menu_show_friend_list">${LANG["lang_friend_list"]}</a>
+                </li>
+                <li><a href="login.html?act=menu_sign_out">${LANG["lang_sign_out"]}</a>
+                </li>
+            </ul>
+            <!-- /.dropdown-user -->
+        </li>
+        <!-- /.dropdown -->
+    </ul>
+    <!-- /.navbar-top-links -->
+
+    <div class="navbar-default sidebar" role="navigation">
+        <div class="sidebar-nav navbar-collapse">
+            <ul class="nav" id="side-menu">
+                <li>
+                    <a href="main_guid.html?act=menu_main_guid"><i class="fa fa-dashboard fa-fw"></i> Dashboard</a>
+                </li>
+                
+                <!-- role manager start -->
+<#list role_template_list?keys as template_key>
+<#assign role_template_value = role_template_list[template_key]>
+                <li>
+                    <a href="#"><i class="fa fa-table fa-fw"></i> ${role_template_value.template_type_name}<span class="fa arrow"></span></a>
+                    <ul class="nav nav-second-level">
+<#if isManager>
+						<!-- show all report for manage -->
+						<li>
+							<a href="${role_template_value.show_list_url}&role_uuid=">${role_template_value.show_list_title} - ${LANG["lang_manage"]}</a>
+						</li>
+</#if>
+<#list role_name_list as item>
+<#if template_key == item.type>
+						<!-- show role team for current account -->
+                        <li>
+                            <a href="#">${item.name} <span class="fa arrow"></span></a>
+                            <ul class="nav nav-third-level">
+	                            <li>
+	                            	<a href="${role_template_value.show_list_url}&role_uuid=${item.uuid}&role_template_type=${template_key}">${role_template_value.show_list_title}</a>
+	                        	</li>
+	                        	<li>
+	                            	<a href="${role_template_value.add_item_url}&role_uuid=${item.uuid}&role_template_type=${template_key}">${role_template_value.add_item_title}</a>
+	                        	</li>
+                            </ul>
+                            <!-- /.nav-third-level -->
+                        </li>
+</#if>
+</#list>
+                    </ul>
+                    <!-- /.nav-second-level -->
+                </li>
+</#list>
+                <!-- role manager end -->
+
+                <li>
+                    <a href="#"><i class="fa fa-files-o fa-fw"></i> ${LANG["lang_system_manage"]}<span class="fa arrow"></span></a>
+                    <ul class="nav nav-second-level">
+<#if isManager>
+                        <li>
+                            <a href="account_list.html?act=menu_show_account_list">${LANG["lang_account_manage"]}</a>
+                        </li>
+                        <li>
+                            <a href="role_list.html?act=menu_show_role_list">${LANG["lang_role_manage"]}</a>
+                        </li>                        
+</#if>
+                        <li>
+                            <a href="system_info.html?act=menu_show_system_info">${LANG["lang_system_info"]}</a>
+                        </li>
+                    </ul>
+                    <!-- /.nav-second-level -->
+                </li>
+            </ul>
+        </div>
+        <!-- /.sidebar-collapse -->
+    </div>
+    <!-- /.navbar-static-side -->
+</td>
+<td>

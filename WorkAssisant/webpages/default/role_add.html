@@ -1,0 +1,170 @@
+
+<#include "template_header.html">
+
+<script language="javascript">
+$(document).ready(function(){
+
+	lang_role =	"${LANG['lang_role']}";
+	err_length_must 		= "${LANG['lang_err_length_must']}"	
+
+	tips = $("#validateTips");
+
+	function updateTips(t) {
+		tips.text(t);
+		tips.text(t).addClass("text-danger");
+		setTimeout(function() {
+			tips.removeClass( "text-danger", 1500 );
+		}, 500 );
+    }
+
+    function checkLength( o, n, min, max ) {
+		if ( o.val().length > max || o.val().length < min ) {
+			updateTips( n + err_length_must + min + " - " + max + "." );
+			// [delete] updateTips( "Length of " + n + " must be between " + min + " and " + max + "." );
+			o.focus();
+			return false;
+		} else {
+			return true;
+		}
+	}
+
+	$("#submit_add_role").click(function(){
+    	var valid = true;
+
+		var role_name = $("#role_name").val();
+	    var role_type = $("#role_type").val();
+	    var leader_uuid = $("#role_leader").val();
+	    var current_account_uuid = "${current_account_uuid}";
+	    var visible_type = $("#visible_type").val();
+		var role_desc = $("#role_desc").val();
+
+		valid = valid && checkLength( $("#role_name"), lang_role, 1, 80);
+		
+		if (!valid)
+		{
+			return valid;
+		}
+
+	    $.post("role_list.html",
+	    {
+	    	act		: "act_add_role",
+	    	name	: role_name,
+	    	type 	: role_type,
+	    	leader_uuid	: leader_uuid,
+	    	current_account_uuid : current_account_uuid,
+	    	visible_type : visible_type,
+	    	role_desc : role_desc,
+	    	random		: Math.random()
+	    }, function(data, status)
+	    {
+	    	if (status == "success")
+	    	{
+	    		var retval = JSON.parse(data);
+	    		if (retval.result == "OK")
+	    		{
+	    			window.location.href="role_list.html?act=menu_show_role_list";
+	    		}
+	    		else
+	    		{
+	    			updateTips(retval.message);
+	    		}
+	    	}
+	    });
+	});
+	
+});
+</script>
+
+	<#include "template_menu.html">
+	
+	<div id="page-wrapper">
+        <div class="row">
+            <div class="col-lg-12">
+                <h4 class="page-header"></h4>
+            </div>
+            <!-- /.col-lg-12 -->
+        </div>
+        <!-- /.row -->
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        ${LANG["lang_role_add"]}
+                    </div>
+                    <!-- /.panel-heading -->
+                    <div class="panel-body">
+                        <div class="dataTable_wrapper">
+                        
+							<table class="table table-striped table-bordered table-hover">
+                                <tbody>
+                                    <tr>
+                                        <td>${LANG["lang_role_name"]}</td>
+                                        <td><input class="form-control" placeholder="${LANG['lang_role_name']}" id="role_name" autofocus="autofocus"></td>
+									</tr>
+                                    <tr>
+                                        <td>${LANG["lang_role_type"]}</td>
+                                        <td>
+                                        	<select class="form-control" id="role_type">
+<#list role_type_list as value>
+                                                <option value="${value.template_type}">${value.template_type_name}</option>
+</#list>
+                                            </select>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>${LANG["lang_role_leader"]}</td>
+                                        <td>
+                                        	<select class="form-control" id="role_leader">
+<#list account_list as item>
+                                                <option value="${item.uuid}">${item.account} - ${item.name}</option>
+</#list>
+                                            </select>
+                                        </td>
+                                    </tr>
+                                    
+                                    <tr>
+                                        <td>${LANG["lang_visible_type"]}</td>
+                                        <td>
+                                        	<select class="form-control" id="visible_type">
+<#list visible_type_list as value>
+                                                <option value="${value}">${LANG[value]!LANG["lang_unknown"]}</option>
+</#list>
+                                            </select>
+                                        </td>
+                                    </tr>
+
+                                    <tr>
+                                        <td>${LANG["lang_description"]}</td>
+                                        <td><input class="form-control" placeholder="${LANG['lang_description']}" id="role_desc"></td>
+									</tr>
+									
+                                    <tr>
+                                    	<td colspan="2">
+                                    		<p class="text-primary" id="validateTips">${LANG["lang_role_name_required"]}</p>
+                                    	</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+
+						</div>
+                        <!-- /.table-responsive -->
+                        <div class="well">
+                        	<div class="tablearea-set" style="text-align:right;">
+                            	<button type="button" class="btn btn-outline btn-primary" id="submit_add_role">${LANG["lang_submit"]}</button>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- /.panel-body -->
+                </div>
+                <!-- /.panel -->
+            </div>
+            <!-- /.col-lg-12 -->
+        </div>
+        <!-- /.row -->
+
+    </div>
+    <!-- /#page-wrapper -->
+                    
+<#include "template_footer.html">
+
+    

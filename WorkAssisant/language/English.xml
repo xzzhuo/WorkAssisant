@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>   
+<language-def>
+	<language>LANG_ENG</language>
+	<fields>
+		<field>
+			<key>lang_app_name</key>
+			<value>Assistant</value>
+		</field>
+		<field>
+          			<key>lang_title</key>
+          			<value>Assistant</value>
+		</field>
+		<field>
+			<key>NOTIFICATION</key>
+			<value>Notification</value>
+		</field>
+		<field>
+			<key>lang_nt_title</key>
+			<value>title</value>
+		</field>
+		<field>
+			<key>lang_nt_desc</key>
+			<value>Description</value>
+		</field>
+		<field>
+			<key>lang_nt_action1_test</key>
+			<value>Action1 Test</value>
+		</field>
+		<field>
+			<key>lang_nt_action1_uri</key>
+			<value>Action1 Uri</value>
+		</field>
+		<field>
+			<key>lang_nt_severity</key>
+			<value>Severity</value>
+		</field>
+		<field>
+			<key>lang_nt_start_date</key>
+			<value>Start Date</value>
+		</field>
+		<field>
+			<key>lang_nt_end_date</key>
+			<value>End Date</value>
+		</field>
+		<field>
+			<key>lang_nt_app_id</key>
+			<value>App Id</value>
+		</field>
+		<field>
+			<key>IMAGE_VIEW</key>
+			<value>Image View</value>
+		</field>
+		<field>
+			<key>lang_image_add</key>
+			<value>Image Add</value>
+		</field>
+		<field>
+			<key>lang_image_identity</key>
+			<value>Image Identity</value>
+		</field>
+		<field>
+			<key>lang_image_name</key>
+			<value>Image Name</value>
+		</field>
+		<field>
+			<key>lang_image_content</key>
+			<value>Image Centent</value>
+		</field>
+	</fields>
+</language-def>

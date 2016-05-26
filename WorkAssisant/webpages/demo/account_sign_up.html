@@ -1,0 +1,163 @@
+
+<#include "template_header.html">
+
+<script language="javascript">
+$(document).ready(function(){
+
+	lang_account =	"${LANG['lang_account']}";
+	lang_password =	"${LANG['lang_password']}";
+	err_pssword_not_allow 	= "${LANG['lang_err_pssword_not_allow']}";
+	err_password_confirm 	= "${LANG['lang_err_password_confirm']}";
+	err_length_must 		= "${LANG['lang_err_length_must']}";
+	account_example 		= "${LANG['lang_account_example']}";
+	
+	emailRegex = /^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/,
+	tips = $("#validateTips");
+
+	function updateTips(t) {
+		tips.text(t);
+		tips.text(t).addClass("text-danger");
+		setTimeout(function() {
+			tips.removeClass( "text-danger", 1500 );
+		}, 500 );
+    }
+
+    function checkLength( o, n, min, max ) {
+		if ( o.val().length > max || o.val().length < min ) {
+			updateTips( n + " " + err_length_must +  " " + min + " - " + max + "." );
+			// [delete] updateTips( "Length of " + n + " must be between " + min + " and " + max + "." );
+			o.focus();
+			return false;
+		} else {
+			return true;
+		}
+	}
+
+	function checkRegexp( o, regexp, n ) {
+		if ( !( regexp.test( o.val() ) ) ) {
+			updateTips( n );
+			o.focus();
+			return false;
+		} else {
+			return true;
+		}
+	}
+	
+	function checkConfirm( o1, o2, n ) {
+		if ( o1.val().trim() != o2.val().trim() ) {
+			updateTips( n );
+			o2.focus();
+			return false;
+		} else {
+			return true;
+		}
+	}
+
+	$("#submit_add_account").click(function(){
+    	var valid = true;
+
+		var account_name = $("#account_name").val();
+	    var account_password = $("#account_password").val();
+
+		valid = valid && checkLength( $("#account_name"), lang_account, 6, 80);
+		valid = valid && checkLength( $("#account_password"), lang_password, 5, 16);
+		
+		valid = valid && checkRegexp( $("#account_name"), emailRegex, account_example );
+		valid = valid && checkRegexp( $("#account_password"), /^([0-9a-zA-Z])+$/, err_pssword_not_allow );
+
+		valid = valid && checkConfirm( $("#account_password"), $("#password_confirm"), err_password_confirm );
+		
+		if (!valid)
+		{
+			return valid;
+		}
+
+	    $.post("account_list.html",
+	    {
+	    	act			: "act_sign_up",
+	    	account		: account_name,
+	    	password	: account_password,
+	    	random		: Math.random()
+	    }, function(data, status)
+	    {
+	    	if (status == "success")
+	    	{
+	    		var retval = JSON.parse(data);
+	    		if (retval.result == "OK")
+	    		{
+	    			updateTips(retval.message);
+	    		}
+	    		else
+	    		{
+	    			updateTips(retval.message);
+	    		}
+	    	}
+	    });
+	});
+	
+});
+</script>
+
+	<div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+                <h4 class="page-header"></h4>
+            </div>
+            <!-- /.col-lg-12 -->
+        </div>
+        <!-- /.row -->
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        ${LANG["lang_sign_up"]}
+                        <button type="button" class="btn btn-link" onclick="window.location.href='login.html?act=menu_login'">${LANG["lang_return_to_signin"]}</button>
+                    </div>
+                    <!-- /.panel-heading -->
+                    <div class="panel-body">
+                        <div class="dataTable_wrapper">
+                        
+							<table class="table table-striped table-bordered table-hover">
+                                <tbody>
+                                    <tr>
+                                        <td>${LANG["lang_account_name"]}</td>
+                                        <td><input class="form-control" placeholder="${LANG['lang_account_example']}" id="account_name" autofocus="autofocus"></td>
+									</tr>
+                                    <tr>
+                                        <td>${LANG["lang_password"]}</td>
+                                        <td><input class="form-control" type="password" placeholder="${LANG['lang_password']}" id="account_password"></td>
+                                    </tr>
+                                    <tr>
+                                        <td>${LANG["lang_password_confirm"]}</td>
+                                        <td><input class="form-control" type="password" placeholder="${LANG['lang_password_confirm']}" id="password_confirm"></td>
+                                    </tr>
+                                    <tr>
+                                    	<td colspan="2">
+                                    		<p class="text-primary" id="validateTips">${LANG["lang_all_fields_required"]}</p>
+                                    	</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+
+						</div>
+                        <!-- /.table-responsive -->
+                        <div class="well">
+                        	<div class="tablearea-set" style="text-align:right;">
+                            	<button type="button" class="btn btn-outline btn-primary" id="submit_add_account">${LANG["lang_submit"]}</button>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- /.panel-body -->
+                </div>
+                <!-- /.panel -->
+            </div>
+            <!-- /.col-lg-12 -->
+        </div>
+        <!-- /.row -->
+
+    </div>
+    <!-- /#page-wrapper -->
+                    
+<#include "template_footer.html">
+
+    

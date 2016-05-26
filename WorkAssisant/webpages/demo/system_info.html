@@ -1,0 +1,68 @@
+
+<#include "template_header.html">
+
+	<#include "template_menu.html">
+	
+	<div id="page-wrapper">
+        <div class="row">
+            <div class="col-lg-12">
+                <h4 class="page-header"></h4>
+            </div>
+            <!-- /.col-lg-12 -->
+        </div>
+        <!-- /.row -->
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        ${LANG["lang_system_info"]}
+                    </div>
+                    <!-- /.panel-heading -->
+                    <div class="panel-body">
+                        <div class="dataTable_wrapper">
+                        
+							<table id="dataTables-rols" border="1">
+                                <tbody>
+                                    <tr class="odd gradeX">
+                                        <td>${LANG["lang_app_version"]}</td>
+                                        <td>${data.appver}</td>
+                                        <td>${LANG["lang_db_engine"]}</td>
+                                        <td>${data.dbengine}</td>                                        
+                                    </tr>
+                                    <tr class="odd gradeX">
+                                    	<td>${LANG["lang_database_version"]}</td>
+                                        <td>${data.dbver}</td>
+                                        <td>${LANG["lang_device_info"]}</td>
+                                        <td></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+
+						</div>
+                        <!-- /.table-responsive -->
+                        <div class="well">
+
+                        </div>
+                    </div>
+                    <!-- /.panel-body -->
+                </div>
+                <!-- /.panel -->
+            </div>
+            <!-- /.col-lg-12 -->
+        </div>
+        <!-- /.row -->
+
+    </div>
+    <!-- /#page-wrapper -->
+                    
+<#include "template_footer.html">
+
+<!-- Page-Level Demo Scripts - Tables - Use for reference -->
+<script>
+$(document).ready(function() {
+    $('#dataTables-example').DataTable({
+            responsive: true
+    });
+});
+</script>
+    

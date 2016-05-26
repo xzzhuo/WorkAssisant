@@ -1,0 +1,203 @@
+
+<#include "template_header.html">
+
+<link rel="stylesheet" href="jquery-ui/jquery-ui.css">
+<script type="text/javascript" src="jquery-ui/jquery-ui.js"></script>
+
+<script language="javascript">
+$(document).ready(function(){
+
+	$( "#start_date").datepicker({
+		showButtonPanel: true,
+		showWeek: false,
+		changeMonth: true,
+		changeYear: true,
+		dateFormat: "yy-mm-dd",
+		timeFormat: "HH-mm-ss",
+		prevText: "${LANG['lang_prev_day']}",
+		nextText: "${LANG['lang_next_day']}",
+		weekHeader: "${LANG['lang_week_header']}",
+		currentText: "${LANG['lang_today']}",
+		closeText: "${LANG['lang_done']}",
+		monthNamesShort: ${LANG['lang_month_names_short']},
+		dayNamesShort: ${LANG['lang_day_names_short']},
+		dayNamesMin: ${LANG['lang_day_names_min']}
+    });
+    
+    $( "#end_date").datepicker({
+		showButtonPanel: true,
+		showWeek: false,
+		changeMonth: true,
+		changeYear: true,
+		dateFormat: "yy-mm-dd",
+		timeFormat: "HH-mm-ss",
+		prevText: "${LANG['lang_prev_day']}",
+		nextText: "${LANG['lang_next_day']}",
+		weekHeader: "${LANG['lang_week_header']}",
+		currentText: "${LANG['lang_today']}",
+		closeText: "${LANG['lang_done']}",
+		monthNamesShort: ${LANG['lang_month_names_short']},
+		dayNamesShort: ${LANG['lang_day_names_short']},
+		dayNamesMin: ${LANG['lang_day_names_min']}
+    });
+    
+	tips = $("#validateTips");
+
+	function updateTips(t) {
+		tips.text(t);
+		tips.text(t).addClass("text-danger");
+		setTimeout(function() {
+			tips.removeClass( "text-danger", 1500 );
+		}, 500 );
+    }
+    
+	$("#submit_notification_add").click(function(){
+    	var valid = true;
+
+		var role_uuid 		= "${role_uuid}";
+		var account_uuid	= "${account_uuid}";
+		
+		var title			= $("#title").val();
+		var description 	= $("#desc").val();
+		var action1text 	= $("#action1_test").val();
+		var action1uri 		= $("#action1_uri").val();
+		var severity 		= $("#severity").val();
+		var startdate 		= $("#start_date").val();
+		var enddate 		= $("#end_date").val();
+		var targetappname 	= $("#app_id").val();
+		
+	    $.post("ajax.html",
+	    {
+	    	act				: "${role_template.add_item_command}",
+	    	role_uuid		: role_uuid,
+	    	account_uuid	: account_uuid,
+	    	title 			: title,
+	    	nt_description 	: description,
+	    	action1text 	: action1text,
+	    	action1uri 		: action1uri,
+	    	severity 		: severity,
+	    	startdate 		: startdate,
+	    	enddate 		: enddate,
+	    	targetappname	: targetappname,
+	    	random			: Math.random()
+	    }, function(data, status)
+	    {
+	    	if (status == "success")
+	    	{
+	    		var retval = JSON.parse(data);
+	    		if (retval.result == "OK")
+	    		{
+	    			window.location.href="${role_template.show_list_url}&role_uuid=" + role_uuid;
+	    		}
+	    		else
+	    		{
+	    			updateTips(retval.message);
+	    		}
+	    	}
+	    });
+	});
+	
+});
+</script>
+
+	<#include "template_menu.html">
+	
+	<div id="page-wrapper">
+        <div class="row">
+            <div class="col-lg-12">
+                <h4 class="page-header"></h4>
+            </div>
+            <!-- /.col-lg-12 -->
+        </div>
+        <!-- /.row -->
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        ${role_template.add_item_title}
+                    </div>
+                    <!-- /.panel-heading -->
+                    <div class="panel-body">
+                        <div class="dataTable_wrapper">
+                        
+							<table class="table table-striped table-bordered table-hover">
+                                <tbody>
+                                
+                                
+                                
+<tr>
+<td>${LANG["lang_nt_title"]}</td>
+<td><input class="form-control" placeholder="${LANG['lang_nt_title']}" id="title"></td>
+</tr>
+
+<tr>
+<td>${LANG["lang_nt_desc"]}</td>
+<td><input class="form-control" placeholder="${LANG['lang_nt_desc']}" id="desc"></td>
+</tr>
+
+<tr>
+<td>${LANG["lang_nt_action1_test"]}</td>
+<td><input class="form-control" placeholder="${LANG['lang_nt_action1_test']}" id="action1_test"></td>
+</tr>
+
+<tr>
+<td>${LANG["lang_nt_action1_uri"]}</td>
+<td><input class="form-control" placeholder="${LANG['lang_nt_action1_uri']}" id="action1_uri"></td>
+
+<tr>
+<td>${LANG["lang_nt_severity"]}</td>
+<td>
+	<select class="form-control" id='severity'>
+	<option value='Critical' >Critical</option>
+	<option value='Optional' >Optional</option>
+	</select>
+</tr>
+
+<tr>
+<td>${LANG["lang_nt_start_date"]}</td>
+<td><input class="form-control" placeholder="${LANG['lang_nt_start_date']}" id="start_date"></td></td>
+</tr>
+
+<tr>
+<td>${LANG["lang_nt_end_date"]}</td>
+<td><input class="form-control" placeholder="${LANG['lang_nt_end_date']}" id="end_date"></td></td>
+</tr>
+
+<tr>
+<td>${LANG["lang_nt_app_id"]}</td>
+<td><input class="form-control" placeholder="${LANG['lang_nt_app_id']}" id="app_id"></td>
+</tr>
+
+
+
+
+									<tr>
+                                    	<td colspan="2" style="vertical-align:middle;">
+                                    		<p class="text-primary" id="validateTips"></p>
+                                    	</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+
+						</div>
+                        <!-- /.table-responsive -->
+                        <div class="well">
+                        	<div class="tablearea-set" style="text-align:right;">
+                            	<button type="button" class="btn btn-outline btn-primary" id="submit_notification_add">${LANG["lang_submit"]}</button>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- /.panel-body -->
+                </div>
+                <!-- /.panel -->
+            </div>
+            <!-- /.col-lg-12 -->
+        </div>
+        <!-- /.row -->
+
+    </div>
+    <!-- /#page-wrapper -->
+                    
+<#include "template_footer.html">
+
+    

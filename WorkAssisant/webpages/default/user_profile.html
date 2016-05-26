@@ -1,0 +1,221 @@
+
+<#include "template_header.html">
+
+<script type="text/javascript" src="js/jquery.form.js"></script>
+<script type="text/javascript" src="js/my-util.js"></script>
+
+<script language="javascript">
+$(document).ready(function(){
+
+	lang_sex_group	= ${LANG['lang_sex_group']};
+	current_sex 	= "${account_sex}"
+	my_sex.initSex("#user_sex", current_sex, lang_sex_group);
+	
+	init_date_picker($("#birthday"), "-15Y");
+	
+});
+</script>
+
+<script language="javascript">
+$(document).ready(function(){
+	
+	$("#image_photo").click(function(){
+		$("#user_photo").click();
+	});
+	
+	$("#user_photo").change(function(){
+		// update photo
+		
+		var f = document.getElementById('user_photo').files[0];
+		var src = null;
+		try
+		{
+			src = window.webkitURL.createObjectURL(f);
+		}
+		catch (e)
+		{
+			try
+			{
+				src = window.URL.createObjectURL(f);
+			}
+			catch (e)
+			{
+				
+			}
+		}
+		document.getElementById('image_photo').src = src;
+	});
+	
+});
+</script>
+
+<script language="javascript">
+$(document).ready(function(){
+
+	lang_err_phone_number			= "${LANG['lang_err_phone_number']}";
+	lang_error_file_size 			= "${LANG['lang_error_file_size']}";
+	
+	regexp_phone = /^1[0-9]{10}$/,
+	tips = $("#validateTips");
+
+	function updateTips(t) {
+		tips.text(t);
+		tips.text(t).addClass("text-danger");
+		setTimeout(function() {
+			tips.removeClass( "text-danger", 1500 );
+		}, 500 );
+    }
+
+	function checkRegexp( o, regexp, n ) {
+		if ( !( regexp.test( o.val() ) ) ) {
+			updateTips( n );
+			o.focus();
+			return false;
+		} else {
+			return true;
+		}
+	}
+	
+	function checkFile( id, limit, t ) {
+		var f = document.getElementById(id).files[0];
+
+		if ( f.size > limit ) {
+			updateTips( t + ": " + limit/1024 + "KB");
+			return false;
+		} else {
+			return true;
+		}
+	}
+
+	var options = {
+		url: 'user_profile.html?act=cooperate_act_update_user_profile',
+		type: 'post',
+		data: {
+			account:"${current_account}",
+			random:Math.random()
+        },
+		beforeSubmit: function(a,f,o) {
+			var valid = true;
+
+		    var phone_number = $("#phone_number").val();
+		    var user_photo = $("#user_photo").val();
+		    
+		    updateTips("");
+		    
+			if (phone_number.length > 0)
+			{
+				valid = valid && checkRegexp( $("#phone_number"), regexp_phone, lang_err_phone_number );
+			}
+			
+			if (user_photo.length > 0)
+			{
+				valid = valid && checkFile( 'user_photo', 1024*64, lang_error_file_size );
+			}
+			
+			if (!valid)
+			{
+				return valid;
+			}
+		},
+		success: function (data) {
+			var retval = JSON.parse(data);
+    		if (retval.result == "OK")
+    		{
+    			updateTips("${LANG['lang_update_success']}");
+    		}
+    		else
+    		{
+    			updateTips(retval.message);
+    		}
+		}
+	};
+	
+
+	$('#submit_update_profile').ajaxForm(options);
+	
+});
+</script>
+
+	<#include "template_menu.html">
+	
+	<div id="page-wrapper">
+        <div class="row">
+            <div class="col-lg-12">
+                <h4 class="page-header"></h4>
+            </div>
+            <!-- /.col-lg-12 -->
+        </div>
+        <!-- /.row -->
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        ${LANG["lang_user_profile"]}
+                    </div>
+                    <!-- /.panel-heading -->
+                    <div class="panel-body">
+                    	<form id="submit_update_profile" enctype ="multipart/form-data">
+	                        <div class="dataTable_wrapper">
+	                        
+								<!--<table class="table table-hover">-->
+								<table class="table table-striped table-bordered table-hover">
+	                                <tbody>
+	                                    <tr>
+	                                        <td style="vertical-align:middle;">${LANG["lang_account_name"]}</td>
+	                                        <td colspan="3">${current_account}</td>
+	                                        <td rowspan="4">
+	                                    		<input type="file" id="user_photo" name="photo" style="display:none" accept="image/*" value="">
+	                                        	<img src="${photo}" width="160" height="180" alt="${LANG['lang_profile_photo']}" id="image_photo" />
+	                                        </td>
+										</tr>
+	                                    <tr>
+	                                        <td style="vertical-align:middle;">${LANG["lang_user_name"]}</td>
+	                                        <td colspan="3"><input class="form-control" placeholder="${LANG['lang_user_name']}" id="user_name" name="name" value="${account_name}" autofocus="autofocus"></td>
+	                                    </tr>
+	                                    <tr>
+	                                        <td style="vertical-align:middle;">${LANG["lang_user_sex"]}</td>
+	                                        <td>
+	                                        	<select class="form-control" id="user_sex" name="sex"></select>
+	                                        </td>
+	                                        <td style="vertical-align:middle;">${LANG["lang_user_birthday"]}</td>
+	                                        <td colspan="1"><input class="form-control" placeholder="${LANG['lang_user_birthday']}" id="birthday" name="birthday" value="${account_birthday}"></td>
+	                                    </tr>
+	                                    <tr>
+	                                        <td style="vertical-align:middle;">${LANG["lang_phone_number"]}</td>
+	                                        <td colspan="3"><input class="form-control" placeholder="${LANG['lang_phone_number']}" id="phone_number" name="phone" value="${account_phone}"></td>
+	                                    </tr>
+	                                    <tr>
+	                                        <td style="vertical-align:middle;">${LANG["lang_address"]}</td>
+	                                        <td colspan="4"><input class="form-control" placeholder="${LANG['lang_address']}" id="address" name="address" value="${account_address}"></td>
+	                                    </tr>
+	                                    <tr>
+	                                    	<td colspan="5" style="vertical-align:middle;">
+	                                    		<p class="text-primary" id="validateTips"></p>
+	                                    	</td>
+	                                    </tr>
+	                                </tbody>
+	                            </table>
+	
+							</div>
+	                        <!-- /.table-responsive -->
+	                        <div class="well">
+	                        	<div class="tablearea-set" style="text-align:right;">
+	                            	<button type="submit" class="btn btn-outline btn-primary" id="submit_update_profile">${LANG["lang_submit"]}</button>
+	                            </div>
+	                        </div>
+                        </form>
+                    </div>
+                    <!-- /.panel-body -->
+                </div>
+                <!-- /.panel -->
+            </div>
+            <!-- /.col-lg-12 -->
+        </div>
+        <!-- /.row -->
+
+    </div>
+    <!-- /#page-wrapper -->
+                    
+<#include "template_footer.html">
+
+    

@@ -36,6 +36,8 @@ $(document).ready(function(){
 	    var leader_uuid = $("#role_leader").val();
 	    var current_account_uuid = "${current_account_uuid}";
 	    var visible_type = $("#visible_type").val();
+	    var access_type = $("#access_type").val();
+	    var censorship_type = $("#censorship_type").val();
 		var role_desc = $("#role_desc").val();
 
 		valid = valid && checkLength( $("#role_name"), lang_role, 1, 80);
@@ -52,8 +54,10 @@ $(document).ready(function(){
 	    	type 	: role_type,
 	    	leader_uuid	: leader_uuid,
 	    	current_account_uuid : current_account_uuid,
-	    	visible_type : visible_type,
-	    	role_desc : role_desc,
+	    	visible 	: visible_type,
+	    	access		: access_type,
+	    	censorship  : censorship_type,
+	    	role_desc 	: role_desc,
 	    	random		: Math.random()
 	    }, function(data, status)
 	    {
@@ -132,7 +136,29 @@ $(document).ready(function(){
                                             </select>
                                         </td>
                                     </tr>
+                                    
+									<tr>
+                                        <td>${LANG["lang_access_type"]}</td>
+                                        <td>
+                                        	<select class="form-control" id="access_type">
+<#list access_type_list as access_value>
+                                                <option value="${access_value}">${LANG[access_value]!LANG["lang_unknown"]}</option>
+</#list>
+                                            </select>
+                                        </td>
+                                    </tr>
 
+									<tr>
+                                        <td>${LANG["lang_censorship_type"]}</td>
+                                        <td>
+                                        	<select class="form-control" id="censorship_type">
+<#list censorship_type_list as censorship_value>
+                                                <option value="${censorship_value}">${LANG[censorship_value]!LANG["lang_unknown"]}</option>
+</#list>
+                                            </select>
+                                        </td>
+                                    </tr>
+                                    
                                     <tr>
                                         <td>${LANG["lang_description"]}</td>
                                         <td><input class="form-control" placeholder="${LANG['lang_description']}" id="role_desc"></td>

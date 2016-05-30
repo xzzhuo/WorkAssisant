@@ -29,6 +29,7 @@ $(document).ready(function(){
 	    		if (div_table != null)
 	    		{
 	    			$("div.ajax-table").html(div_table.html());
+	    			refresh_table($("#dataTables"));
 	    		}
 	    		else
 	    		{
@@ -62,7 +63,7 @@ $(document).ready(function(){
                     <div class="panel-body">
                         <div class="dataTable_wrapper">
                         	<div class="ajax-table" id="table-list">
-                        		<table id="dataTables" border="1">
+								<table id="dataTables" border="1">
 	                                <thead>
 	                                    <tr>
 	                                        <th>${LANG["lang_id"]}</th>
@@ -70,6 +71,8 @@ $(document).ready(function(){
 	                                        <th>${LANG["lang_role_type"]}</th>
 	                                        <th>${LANG["lang_role_leader"]}</th>
 	                                        <th>${LANG["lang_visible"]}</th>
+	                                        <th>${LANG["lang_access"]}</th>
+	                                        <th>${LANG["lang_censorship"]}</th>
 	                                        <th>${LANG["lang_member_count"]}</th>
 	                                        <th>${LANG["lang_creater"]}</th>
 	                                        <th>${LANG["lang_create_date"]}</th>
@@ -86,7 +89,9 @@ $(document).ready(function(){
 	                                        <!-- leader count maybe not exist -->
 	                                        <td>${account_map[item.leader_uuid]!""}</td>
 	                                        <td>${LANG[item.visible]!LANG["lang_unknown"]}</td>
-	                                        <td>${member_count_map[item.uuid]}</td>
+	                                        <td>${LANG[item.access]!LANG["lang_unknown"]}</td>
+	                                        <td>${LANG[item.censorship]!LANG["lang_unknown"]}</td>
+	                                        <td>${member_count_map[item.uuid]!"0"}</td>
 	                                        <td>${account_map[item.creater_uuid]!""}</td>
 	                                        <td>${item.create_date?string("yyyy-MM-dd HH:mm:ss")}</td>
 	                                        <td>
@@ -120,3 +125,11 @@ $(document).ready(function(){
     <!-- /#page-wrapper -->
 
 <#include "template_footer.html">
+
+<!-- Page-Level account Scripts - Tables - Use for reference -->
+<script type="text/javascript">
+$(document).ready(function() {
+
+    refresh_table($("#dataTables"));
+});
+</script>

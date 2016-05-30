@@ -207,7 +207,7 @@
                 <i class="fa fa-user fa-fw"></i>  <i class="fa fa-caret-down"></i>
             </a>
             <ul class="dropdown-menu dropdown-user">
-            	<li><a href="#"><i class="fa fa-user fa-fw"></i> ${current_account!""}</a>
+            	<li><a href="#"><i class="fa fa-user fa-fw"></i> ${current_name!current_account!""}</a>
             	</li>
             	<li class="divider"></li>
                 <li><a href="user_profile.html?act=menu_show_user_profile"><i class="fa fa-user fa-fw"></i> ${LANG["lang_user_profile"]}</a>
@@ -246,7 +246,7 @@
                     <!-- /input-group -->
                 </li>
                 <li>
-                    <a href="main_guid.html?act=menu_main_guid"><i class="fa fa-dashboard fa-fw"></i> Dashboard</a>
+                    <a href="main_guid.html?act=menu_main_guid"><i class="fa fa-dashboard fa-fw"></i> ${LANG['lang_Dashboard']}</a>
                 </li>
                 
                 <!-- role manager start -->
@@ -265,6 +265,7 @@
 <#if template_key == item.type>
 						<!-- show role team for current account -->
                         <li>
+<#if false>
                             <a href="#">${item.name} <span class="fa arrow"></span></a>
                             <ul class="nav nav-third-level">
 	                            <li>
@@ -275,6 +276,9 @@
 	                        	</li>
                             </ul>
                             <!-- /.nav-third-level -->
+<#else>
+							<a href="${role_template_value.show_list_url}&role_uuid=${item.uuid}&role_template_type=${template_key}">${item.name}</a>
+</#if>
                         </li>
 </#if>
 </#list>

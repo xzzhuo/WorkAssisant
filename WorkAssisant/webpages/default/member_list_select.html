@@ -4,18 +4,38 @@
 <script type="text/javascript">
 $(document).ready(function(){
 	
+<#if censorship == "GPT_APPROVAL">
+	$("input[name='spinner_privilege_priority']").each(function() {
+        $(this).spinner({min: 0, max: 20});
+	})
+</#if>
+
 	update_member = function(role_uuid)
 	{
 		var members = "";
+		var privilege_priority = "";
+		var privilege_desc = "";
+		
         $("input[name='checkbox_account']:checked").each(function() {
         	members += $(this).val() + ",";
         })
+        
+<#if censorship == "GPT_APPROVAL">
+		$("input[name='spinner_privilege_priority']").each(function() {
+	        privilege_priority += $(this).attr("uuid") + ":" + $(this).spinner("value") + ",";
+		})
+		$("input[name='privilege_desc']").each(function() {
+	        privilege_desc += $(this).attr("uuid") + ":" + $(this).val() + ",";
+		})
+</#if>
 
 		$.post("role_list.html",
 		{
 			act			: "act_member_update",
 			role_uuid	: role_uuid,
 			member_list	: members,
+			privilege_priority	: privilege_priority,
+			privilege_desc		: privilege_desc,
 			random		: Math.random()
 		},
 		function(data, status)
@@ -63,17 +83,25 @@ $(document).ready(function(){
                                         <th>${LANG["lang_index"]}</th>
                                         <th>${LANG["lang_account_name"]}</th>
                                         <th>${LANG["lang_user_name"]}</th>
+<#if censorship == "GPT_APPROVAL">
+                                        <th>${LANG["lang_privilege_priority"]}</th>
+                                        <th>${LANG["lang_privilege_desc"]}</th>
+</#if>
                                         <th>${LANG["lang_select_all"]}</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-<#if account_list??>
+<#if account_union_list??>
 <#assign index=1>
-<#list account_list as item>
+<#list account_union_list as item>
                                     <tr class="odd gradeX">
                                         <td>${index}</td>
                                         <td>${item.account}</td>
                                         <td>${item.name}</td>
+<#if censorship == "GPT_APPROVAL">
+                                        <td><input uuid="${item.uuid}" name="spinner_privilege_priority" value="${item.privilege_priority}" disabled="disabled"></td>
+                                        <td><input uuid="${item.uuid}" class="form-control" id="privilege_desc" name="privilege_desc" value="${item.privilege_desc}"></td>
+</#if>                                      
                                         <td>
 <#if leader_uuid == item.uuid>
 											<input type="checkbox" name="checkbox_account" value="${item.uuid}" checked="checked" disabled="disabled" />

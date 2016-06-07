@@ -4,7 +4,9 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import bdx.net.log.NetLog;
 import bdx.net.netty.NetFile;
@@ -63,7 +65,44 @@ public class MyProcess extends CooperateProcess {
 	@Override
 	protected void onErrorNotFind(String client, String uri)
 	{
+		NetLog.debug(client, this.getUri());
+		
 		if (uri.equals("\\api\\Notification"))
+		{
+			MyNotificationTable tableNotification = new MyNotificationTable();
+			List<Map<String, Object>> list = tableNotification.queryAllData();
+			
+			JsonParser parserJson = new JsonParser();
+			JsonArray arrayJson = new JsonArray();
+			
+			for (Map<String, Object> map: list)
+			{
+				Gson gson = new Gson();
+				String text = null;
+				try {
+					map = NotificationAdapter(map);
+					text = gson.getAdapter(Map.class).toJson(map);
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				arrayJson.add(parserJson.parse(text));
+			}
+			
+			JsonObject objJson = new JsonObject();
+			objJson.add("Notifications", arrayJson);
+			//objJson.add("ArchivedIds", arcIds);
+			// {"":["":[1573]}
+			
+			this.print(objJson.toString());
+		}
+		else
+		{
+			super.onErrorNotFind(client, uri);
+		}
+		
+		/*
+		if (!uri.equals("\\api\\Notification"))
 		{
 			Date endDate = new Date();
 			endDate.setDate(endDate.getDate()+1);
@@ -117,11 +156,82 @@ public class MyProcess extends CooperateProcess {
 		{
 			super.onErrorNotFind(client, uri);
 		}
+		*/
 	}
 	
+	private Map<String, Object> NotificationAdapter(Map<String, Object> map) {
+		
+		Map<String, Object> retval = new HashMap<String, Object>();
+		
+		//private int nt_state = 0;		// 0-new, 1-burn, 2-delete
+		
+		for(Entry<String, Object> entry :  map.entrySet())
+		{
+			if (entry.getKey().equals("id"))
+			{
+				retval.put("Id", entry.getValue());
+			}
+			
+			if (entry.getKey().equals("title"))
+			{
+				retval.put("Title", entry.getValue());
+			}
+			
+			if (entry.getKey().equals("nt_description"))
+			{
+				retval.put("Description", entry.getValue());
+			}
+
+			if (entry.getKey().equals("targetappname"))
+			{
+				retval.put("TargetAppName", entry.getValue());
+			}
+
+			if (entry.getKey().equals("severity"))
+			{
+				retval.put("Severity", entry.getValue());
+			}
+			
+			if (entry.getKey().equals("action1text"))
+			{
+				retval.put("Action1Text", entry.getValue());
+			}
+			
+			if (entry.getKey().equals("action1uri"))
+			{
+				retval.put("Action1Uri", entry.getValue());
+			}
+			
+			if (entry.getKey().equals("startdate"))
+			{
+				retval.put("StartDate", entry.getValue());
+			}
+			
+			if (entry.getKey().equals("enddate"))
+			{
+				retval.put("EndDate", entry.getValue());
+			}
+			
+			retval.put("ShortDescription", "null");
+			retval.put("NotificationType", "null");
+			retval.put("Category", "null");
+			retval.put("Action2Text", "null");
+			retval.put("Action2Uri", "null");
+			
+			retval.put("Action1ActionType", "null");
+			retval.put("State", "null");
+			retval.put("Action2ActionType", "null");
+
+			retval.put("OOBECompleteDate", new Date());
+		}
+
+		return retval;
+	}
+
 	@Override
 	protected boolean doProcess(String client, String path, File tempFile, String act, Map<String, String> request) throws ShowErrorException {
 
+		NetLog.debug(client, this.getUri());
 		// int a = tempFile.hashCode();
 
 		if (act.equals("menu_show_notification_list"))
@@ -144,6 +254,10 @@ public class MyProcess extends CooperateProcess {
 		{
 			MyNotificationTable tableNotification = new MyNotificationTable();
 			this.templateSetDeletedState(client, request, tableNotification, MyRoleType.NOTIFICATION.name());
+		}
+		else if (this.getUri().equals("/Notification/nt.html"))
+		{
+			
 		}
 
 		else if (act.equals("menu_show_image_list"))

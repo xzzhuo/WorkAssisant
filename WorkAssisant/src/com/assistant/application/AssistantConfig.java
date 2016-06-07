@@ -9,7 +9,7 @@ import bdx.net.interface1.ServerType;
 
 public class AssistantConfig extends CooperateConfig {
 
-	private final int VERSION = 2;
+	private final int VERSION = 3;
 	
 	private DatabaseParam mDatabaseParam = new DatabaseParam();
 	private final int mApplicationVersion = 1;
@@ -21,7 +21,7 @@ public class AssistantConfig extends CooperateConfig {
 	
 	private AssistantConfig()
 	{
-		mDatabaseParam.setDatabaseName("assistant_web");
+		mDatabaseParam.setDatabaseName("assistant");
 		mDatabaseParam.setUser("root");
 		mDatabaseParam.setPassword("");
 		mDatabaseParam.setPort(3306);

@@ -46,7 +46,7 @@
 <#list role_template_list?keys as template_key>
 <#assign role_template_value = role_template_list[template_key]>
                 <li>
-                    <a href="#"><i class="fa fa-table fa-fw"></i> ${role_template_value.template_type_name}<span class="fa arrow"></span></a>
+                    <a href="#"><i class="fa fa-table fa-fw"></i> ${role_template_value.template_type_name!"unknown"}<span class="fa arrow"></span></a>
                     <ul class="nav nav-second-level">
 <#if isManager>
 						<!-- show all report for manage -->
@@ -103,3 +103,5 @@
         <!-- /.sidebar-collapse -->
     </div>
     <!-- /.navbar-static-side -->
+</td>
+<td>

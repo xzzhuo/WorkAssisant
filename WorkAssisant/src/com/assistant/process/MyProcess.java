@@ -67,7 +67,7 @@ public class MyProcess extends CooperateProcess {
 	{
 		NetLog.debug(client, this.getUri());
 		
-		if (uri.equals("\\api\\Notification"))
+		if (uri.equals("\\api\\Notification") || uri.equals("\\api\\Notification\\"))
 		{
 			MyNotificationTable tableNotification = new MyNotificationTable();
 			List<Map<String, Object>> list = tableNotification.queryAllData();
@@ -95,6 +95,9 @@ public class MyProcess extends CooperateProcess {
 			// {"":["":[1573]}
 			
 			this.print(objJson.toString());
+			
+			//String temp = "{\"Notifications\":[{\"Id\":1678,\"Title\":\"AFDGAD\",\"Description\":\"GADFGFGD\",\"ShortDescription\":null,\"TargetAppName\":\"C7AFC9C6D424658344A30FD4C1772B55\",\"NotificationType\":null,\"Category\":null,\"Severity\":\"Optional\",\"Action1Text\":null,\"Action1Uri\":null,\"Action2Text\":null,\"Action2Uri\":null,\"Action1ActionType\":null,\"State\":null,\"Action2ActionType\":null,\"StartDate\":\"2016-06-13T10:32:30\",\"EndDate\":\"2016-06-13T10:32:31\",\"OOBECompleteDate\":\"1900-01-01T00:00:00\"},{\"Id\":1679,\"Title\":\"HAIMEI\",\"Description\":\"HAIMEI\",\"ShortDescription\":null,\"TargetAppName\":\"C7AFC9C6D424658344A30FD4C1772B55\",\"NotificationType\":null,\"Category\":null,\"Severity\":\"Optional\",\"Action1Text\":null,\"Action1Uri\":null,\"Action2Text\":null,\"Action2Uri\":null,\"Action1ActionType\":null,\"State\":null,\"Action2ActionType\":null,\"StartDate\":\"2016-06-13T10:34:32\",\"EndDate\":\"2016-06-23T10:34:33\",\"OOBECompleteDate\":\"1900-01-01T00:00:00\"},{\"Id\":1684,\"Title\":\"haimei123\",\"Description\":\"haimei123\",\"ShortDescription\":null,\"TargetAppName\":\"C7AFC9C6D424658344A30FD4C1772B55\",\"NotificationType\":null,\"Category\":null,\"Severity\":\"Optional\",\"Action1Text\":null,\"Action1Uri\":null,\"Action2Text\":null,\"Action2Uri\":null,\"Action1ActionType\":null,\"State\":null,\"Action2ActionType\":null,\"StartDate\":\"2016-06-13T16:03:42\",\"EndDate\":\"2016-06-18T16:03:43\",\"OOBECompleteDate\":\"1900-01-01T00:00:00\"},{\"Id\":1687,\"Title\":\"etyetyety\",\"Description\":\"rtyrtyr\",\"ShortDescription\":null,\"TargetAppName\":\"C7AFC9C6D424658344A30FD4C1772B55\",\"NotificationType\":null,\"Category\":null,\"Severity\":\"Optional\",\"Action1Text\":null,\"Action1Uri\":null,\"Action2Text\":null,\"Action2Uri\":null,\"Action1ActionType\":null,\"State\":null,\"Action2ActionType\":null,\"StartDate\":\"2016-06-13T16:30:30\",\"EndDate\":\"2016-06-17T16:30:31\",\"OOBECompleteDate\":\"1900-01-01T00:00:00\"}],\"ArchivedIds\":[]}";
+			//this.print(temp);
 		}
 		else
 		{
@@ -297,7 +300,23 @@ public class MyProcess extends CooperateProcess {
 		{
 			ImageViewTable tableImageView = new ImageViewTable();
 			this.templateSetDeletedState(client, request, tableImageView, MyRoleType.IMAGE_VIEW.name());
-		}		
+		}
+		else if (act.equals("menu_chat"))
+		{
+			if (request.containsKey("account") && request.containsKey("name"))
+			{
+				String account = request.get("account");
+				String name = request.get("name");
+				
+				this.mWebUtil.assign("account", account);
+				this.mWebUtil.assign("name", name);
+				this.mWebUtil.display("websocket.html");
+			}
+			else
+			{
+				this.print("current account is not exist");
+			}
+		}
 		
 		else
 		{

@@ -66,5 +66,9 @@
 			<key>lang_image_content</key>
 			<value>Image Centent</value>
 		</field>
+		<field>
+			<key>lang_chat</key>
+			<value>Chat</value>
+		</field>
 	</fields>
 </language-def>

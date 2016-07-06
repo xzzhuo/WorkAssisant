@@ -2,7 +2,9 @@ package com.assistant.process;
 
 import java.net.SocketAddress;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.assistant.application.AssistantConfig;
 import com.cooperate.data.AccountData;
@@ -16,7 +18,14 @@ import net.sf.json.JSONObject;
 
 public class MyWebSocket extends WebSocket {
 
+	class Result {
+		public SocketAddress address;
+		public String jsonValue;
+	}
+	
 	private static final String TAG = "MyWebSocket";
+	
+	private Map<String, SocketAddress> friendMap = new HashMap<String, SocketAddress>();
 	
 	public MyWebSocket() {
 		super("websocket");
@@ -45,6 +54,7 @@ public class MyWebSocket extends WebSocket {
 		{
 			JSONObject jsonObject = null;
 			JSONObject jsonCommand = null;
+			String jsonData = null;
 			try
 			{
 				jsonObject = JSONObject.fromObject(message);
@@ -54,15 +64,21 @@ public class MyWebSocket extends WebSocket {
 		        NetLog.error(TAG, e.getMessage());
 		    }
 			
+			try
+			{
+				jsonData = jsonObject.getString("data");
+			} catch (Exception e) {
+		    }
+			
 			Command command = null;
-			String strRespond = null;
+			Result respond = null;
 			if (jsonCommand != null)
 			{
 				ObjectMapper objectMapper = new ObjectMapper();
 				try {
 					command = objectMapper.readValue(jsonCommand.toString(), Command.class);
 
-					strRespond = this.handleCommand(command);
+					respond = this.handleCommand(address, command, jsonData);
 					
 					NetLog.debug(TAG, command.getName());
 			    } catch (Exception e) {
@@ -73,11 +89,11 @@ public class MyWebSocket extends WebSocket {
 			// JSONObject jsonObject = new JSONObject();
 			// {"receive":{"name":"%s", "state":"%s"}", "data":"%s"}
 			String jsonValue = null;
-			if (strRespond != null)
+			if (respond.jsonValue != null)
 			{
 				jsonValue = String.format("{\"command\":{\"name\":\"%s\", \"state\":\"%s\"}, \"data\":%s}",
 						command.getName(),
-						"success",strRespond);
+						"success",respond.jsonValue);
 			}
 			else
 			{
@@ -86,30 +102,53 @@ public class MyWebSocket extends WebSocket {
 						"failed");
 			}
 			
-			this.sendMessage(address, jsonValue);
+			if (respond.address != null)
+			{
+				this.sendMessage(respond.address, jsonValue);
+			}
+			else
+			{
+				NetLog.warning("WebSocket", "Target is not exist");
+			}
 		}
 
 	}
 
-	private String handleCommand(Command command) {
+	private Result handleCommand(SocketAddress address, Command command, String jsonData) {
 		
-		String jsonValue = null;
+		Result result = new Result();
 		
 		if (command.getName().equals("GET_FRIND_LIST"))
 		{
-			jsonValue = this.getFrindList(command.getAccount());
+			friendMap.put(command.getAccount(), address);
+			result.jsonValue = this.getFrindList(command.getAccount());
+			result.address = address;
 		}
 		else if (command.getName().equals("CHAT_CONTENT"))
 		{
-			jsonValue = "{\"nop\":\"nop\"}";
+			SocketAddress target = null;
+			if (this.friendMap.containsKey(command.getTo()))
+			{
+				target = this.friendMap.get(command.getTo());
+			}
+			
+			result.address = target;
+			if (target != null)
+			{
+				result.jsonValue = String.format("{\"message\":\"%s\"}", jsonData);
+			}
+			else
+			{
+				result.jsonValue = null;
+			}
 		}
 		
 		else
 		{
-			jsonValue = "{\"nop\":\"nop\"}";
+			result.jsonValue = "{\"nop\":\"nop\"}";
 		}
 		
-		return jsonValue;
+		return result;
 	}
 
 	@Override

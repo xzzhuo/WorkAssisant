@@ -2,7 +2,9 @@ package com.assistant.process;
 
 import java.net.SocketAddress;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.assistant.application.AssistantConfig;
 import com.cooperate.data.AccountData;
@@ -16,7 +18,14 @@ import net.sf.json.JSONObject;
 
 public class MyWebSocket extends WebSocket {
 
+	class Result {
+		public SocketAddress address;
+		public String jsonValue;
+	}
+	
 	private static final String TAG = "MyWebSocket";
+	
+	private Map<String, SocketAddress> friendMap = new HashMap<String, SocketAddress>();
 	
 	public MyWebSocket() {
 		super("websocket");
@@ -44,27 +53,32 @@ public class MyWebSocket extends WebSocket {
 		if (message != null && !message.isEmpty())
 		{
 			JSONObject jsonObject = null;
-			JSONObject jsonCommand = null;
+			JSONObject jsonHeader = null;
+			JSONObject jsonData = null;
+
 			try
 			{
 				jsonObject = JSONObject.fromObject(message);
-				jsonCommand = jsonObject.getJSONObject("command");
-				NetLog.debug(TAG, jsonCommand.toString());
+				jsonHeader = jsonObject.getJSONObject("header");
+				jsonData = jsonObject.getJSONObject("data");
+				NetLog.debug(TAG, jsonHeader.toString());
 			} catch (Exception e) {
 		        NetLog.error(TAG, e.getMessage());
 		    }
-			
-			Command command = null;
-			String strRespond = null;
-			if (jsonCommand != null)
+
+			Header header = null;
+			Message msg = null;
+			Result respond = null;
+			if (jsonHeader != null)
 			{
 				ObjectMapper objectMapper = new ObjectMapper();
 				try {
-					command = objectMapper.readValue(jsonCommand.toString(), Command.class);
-
-					strRespond = this.handleCommand(command);
+					header = objectMapper.readValue(jsonHeader.toString(), Header.class);
+					msg = objectMapper.readValue(jsonData.toString(), Message.class);
 					
-					NetLog.debug(TAG, command.getName());
+					respond = this.handleCommand(address, header, msg);
+					
+					NetLog.debug(TAG, header.getMsgid());
 			    } catch (Exception e) {
 			        NetLog.error(TAG, e.getMessage());
 			    }
@@ -73,43 +87,66 @@ public class MyWebSocket extends WebSocket {
 			// JSONObject jsonObject = new JSONObject();
 			// {"receive":{"name":"%s", "state":"%s"}", "data":"%s"}
 			String jsonValue = null;
-			if (strRespond != null)
+			if (respond.jsonValue != null)
 			{
 				jsonValue = String.format("{\"command\":{\"name\":\"%s\", \"state\":\"%s\"}, \"data\":%s}",
-						command.getName(),
-						"success",strRespond);
+						header.getMsgid(),
+						"success",respond.jsonValue);
 			}
 			else
 			{
 				jsonValue = String.format("{\"command\":{\"name\":\"%s\", \"state\":\"%s\"}}",
-						command.getName(),
+						header.getMsgid(),
 						"failed");
 			}
 			
-			this.sendMessage(address, jsonValue);
+			if (respond.address != null)
+			{
+				this.sendMessage(respond.address, jsonValue);
+			}
+			else
+			{
+				NetLog.warning("WebSocket", "Target is not exist");
+			}
 		}
 
 	}
 
-	private String handleCommand(Command command) {
+	private Result handleCommand(SocketAddress address, Header header, Message message) {
 		
-		String jsonValue = null;
+		Result result = new Result();
 		
-		if (command.getName().equals("GET_FRIND_LIST"))
+		if (header.getMsgid().equals("GET_FRIND_LIST"))
 		{
-			jsonValue = this.getFrindList(command.getAccount());
+			friendMap.put(header.getAccount(), address);
+			result.jsonValue = this.getFrindList(header.getAccount());
+			result.address = address;
 		}
-		else if (command.getName().equals("CHAT_CONTENT"))
+		else if (header.getMsgid().equals("CHAT_CONTENT"))
 		{
-			jsonValue = "{\"nop\":\"nop\"}";
+			SocketAddress target = null;
+			if (this.friendMap.containsKey(message.getTo()))
+			{
+				target = this.friendMap.get(message.getTo());
+			}
+			
+			result.address = target;
+			if (target != null)
+			{
+				result.jsonValue = String.format("{\"message\":\"%s\"}", message.getMessage());
+			}
+			else
+			{
+				result.jsonValue = null;
+			}
 		}
 		
 		else
 		{
-			jsonValue = "{\"nop\":\"nop\"}";
+			result.jsonValue = "{\"nop\":\"nop\"}";
 		}
 		
-		return jsonValue;
+		return result;
 	}
 
 	@Override

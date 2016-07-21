@@ -1,9 +1,13 @@
-<!DOCTYPE html>  
+<!DOCTYPE html>
+
+<script type="text/javascript" src="js/jquery-1.10.2.js"></script>
+
 <meta charset="utf-8" />
 <title>WebSocket Test</title>
 <script language="javascript"type="text/javascript">  
     var wsUri ="ws://localhost:8081/websocket"; 
     var output;
+    var account = "${account}";
 
     function init() {
         output = document.getElementById("output");
@@ -16,8 +20,8 @@
     	$('#btn_disconnect').attr("disabled", false);
     	$('#input_url').attr("disabled", true);
     	$('#btn_send').attr("disabled", false);
-    	
-        doSend('{"command":{"name":"GET_FRIND_LIST"}}'); 
+
+        doSend('{"header":{"msgid":"GET_FRIND_LIST","account":"' + account + '","token":"token","date":1468568373480}}'); 
     }  
  
     function onClose(evt) { 
@@ -41,6 +45,10 @@
             	{
             		showList(retval.data);
             	}
+        		else if (retval.command.name == "CHAT_CONTENT")
+        		{
+        			showMessage(retval.data);
+        		}
         	}
         }
         catch (e)
@@ -74,8 +82,8 @@
         };
     }
     
-    function doChat(message) {
-    	jsonValue = '{"command":{"name":"CHAT_CONTENT"},"data":"' + message + '"}';
+    function doChat(message, to) {
+		jsonValue = '{"header":{"msgid":"CHAT_CONTENT","account":"' + account + '","token":"token","date":1468568373480},"data":{"message":"' + message + '","to":"' + to + '"}}'; 
     	doSend(jsonValue); 
     }
 
@@ -107,20 +115,32 @@
 			tdImg.appendTo(tr)
            
 			var tdAccount = $("<td onclick=\"selectAccount('" + data[i].account + "')\">"+ data[i].account +"</td>");
+			// var tdAccount = $("<td id = 'account" + i + "' onclick=\"selectAccount('" + data[i].account + "')\">"+ data[i].account +"</td>");
 			tdAccount.appendTo(tr);
 			
 			// alert(tr.html());
 		}
 	}
-    
+
     function selectAccount(account)
     {
-    	$("#input_account").text(account);
+    	$("#input_account").val(account);
     }
 
-    window.addEventListener("load", init, false);  
-</script>  
-<h2>WebSocket Test: ${name}</h2>  
+    window.addEventListener("load", init, false);
+    
+    function showMessage(data)
+    {
+    	var output = document.getElementById("message");
+    	var pre = document.createElement("p");
+        pre.style.wordWrap = "break-word"; 
+        pre.innerHTML = data.message; 
+        output.appendChild(pre);
+    }
+</script>
+
+<body>
+<h2>WebSocket Test: ${account}</h2>  
 
 <div>
 	<div class="zone_connect" style="position:absolute;top:60px;left:10px;">
@@ -141,10 +161,11 @@
 		<textarea id="input_send" style="width:300px;height:60px;" placeholder="send data"></textarea>
 		<br />
 		<input id="input_account" disabled="disabled"></input>
-		<button type="button" id="btn_send" class="btn btn-default" disabled="disabled" onclick="doChat($('#input_send').val());">Send(ctrl+Enter)</button>
+		<button type="button" id="btn_send" class="btn btn-default" disabled="disabled" onclick="doChat($('#input_send').val(), $('#input_account').val());">Send(ctrl+Enter)</button>
 	</div>
 </div>
 
-<script type="text/javascript" src="js/jquery-1.10.2.js"></script>
 
+        
+</body>
 </html>

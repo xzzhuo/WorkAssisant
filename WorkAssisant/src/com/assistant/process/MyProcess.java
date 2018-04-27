@@ -2,6 +2,7 @@ package com.assistant.process;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -14,6 +15,7 @@ import bdx.net.netty.NetFile;
 import com.assistant.common.MyRoleType;
 import com.assistant.data.ImageViewData;
 import com.assistant.data.NotificationData;
+import com.assistant.table.AccountExtTable;
 import com.assistant.table.ImageViewTable;
 import com.assistant.table.MyNotificationTable;
 import com.cooperate.common.ShowErrorException;
@@ -318,12 +320,46 @@ public class MyProcess extends CooperateProcess {
 			}
 		}
 		
+		else if (act.equals("act_search_account_list"))
+		{
+			String retval = "";
+
+			if (request.containsKey("account") && request.containsKey("keyword")) {
+				// String account = request.get("account");
+				String keyword = request.get("keyword");
+				AccountExtTable tableAccount = new AccountExtTable();
+				List<Map<String, Object>> mapList = tableAccount.searchAccountName(keyword);
+				
+				List<String> listAccount = new ArrayList<String>();
+				for (Map<String, Object> map : mapList) {
+					listAccount.add(map.get("account") + " - " + map.get("name"));
+				}
+				retval = this.MakeJsonReturn("OK", listAccount);
+			} else {
+				retval = this.MakeJsonReturn("failed", "keyword required");
+			}
+			NetLog.debug(client, retval);
+			this.print(retval);
+		}
+		
+		
 		else
 		{
 			super.doProcess(client, path, tempFile, act, request);
 		}
 		
 		return true;
+	}
+
+	private String MakeJsonReturn(String result, List<String> listAccount) {
+		String list = "[]";
+		if (!listAccount.isEmpty()) {
+			list = listAccount.toString().
+					replace("[", "[\"").
+					replace("]", "\"]").
+					replace(", ", "\",\"");
+		}
+		return String.format("{\"result\":\"%s\",\"message\":%s}", result, list);
 	}
 
 }

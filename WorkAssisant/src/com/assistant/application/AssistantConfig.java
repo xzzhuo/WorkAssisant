@@ -21,9 +21,9 @@ public class AssistantConfig extends CooperateConfig {
 	
 	private AssistantConfig()
 	{
-		mDatabaseParam.setDatabaseName("assistant");
+		mDatabaseParam.setDatabaseName("assistant_web");
 		mDatabaseParam.setUser("root");
-		mDatabaseParam.setPassword("");
+		mDatabaseParam.setPassword("root");
 		mDatabaseParam.setPort(3306);
 		mDatabaseParam.setUrl("localhost");
 	}

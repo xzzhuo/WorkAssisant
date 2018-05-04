@@ -67,6 +67,10 @@
 			<value>Image Centent</value>
 		</field>
 		<field>
+			<key>lang_select_file</key>
+			<value>Select a file</value>
+		</field>
+		<field>
 			<key>lang_chat</key>
 			<value>Chat</value>
 		</field>

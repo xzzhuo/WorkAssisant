@@ -86,6 +86,6 @@ public class AssistantConfig extends CooperateConfig {
 
 	@Override
 	public String getTemplatePath() {
-		return "demo";
+		return "default";
 	}
 }
